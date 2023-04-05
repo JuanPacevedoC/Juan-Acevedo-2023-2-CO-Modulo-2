@@ -4,17 +4,19 @@ import random
 from dino_runner.components.obstacles.captus import Cactus
 from dino_runner.components.obstacles.largeCaptus import LargeCactus
 from dino_runner.components.obstacles.bird import Bird
-from dino_runner.utils.constants import SMALL_CACTUS, LARGE_CACTUS, BIRD
+from dino_runner.utils.constants import SMALL_CACTUS, LARGE_CACTUS, BIRD, SCREEN_HEIGHT , SCREEN_WIDTH, FONT_STYLE
 
 class ObstacleManager:
+    HALF_SCREEN_HEIGHT = SCREEN_HEIGHT // 2 
+    HALF_SCREEN_WIDTH = SCREEN_WIDTH // 2
+
     def __init__(self):
         self.obstacles = []
 
-    Enemy = random.randint(0, 3)
 
     def update(self, game):
         if len(self.obstacles) == 0:
-            if self.Enemy == 0:
+            if random.randint(0, 3) == 0:
                 self.obstacles.append(Cactus(SMALL_CACTUS))
             elif random.randint(0, 3) == 1:
                 self.obstacles.append(LargeCactus(LARGE_CACTUS))
@@ -29,6 +31,13 @@ class ObstacleManager:
                 game.death_count += 1
                 game.playing = False
                 break                 
+
+    def show_death_count(self,game, screen):
+        self.font = pygame.font.Font(FONT_STYLE, 30)
+        self.text = self.font.render(f'Total Deaths: {game.death_count}', True, (0, 0, 0))
+        self.text_rect = self.text.get_rect()
+        self.text_rect.center = (self.HALF_SCREEN_WIDTH, self.HALF_SCREEN_HEIGHT + 120)
+        screen.blit(self.text, self.text_rect)            
 
     def draw(self, screen):
         for obstacle in self.obstacles:

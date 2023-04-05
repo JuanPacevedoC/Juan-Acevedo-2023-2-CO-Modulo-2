@@ -3,8 +3,8 @@ import pygame
 from dino_runner.utils.constants import FONT_STYLE, SCREEN_HEIGHT , SCREEN_WIDTH
 
 class Menu:
-    Half_screen_height = SCREEN_HEIGHT // 2
-    Half_screen_width = SCREEN_WIDTH // 2
+    HALF_SCREEN_HEIGHT = SCREEN_HEIGHT // 2
+    HALF_SCREEN_WIDTH = SCREEN_WIDTH // 2
 
     def __init__(self, message, screen):
 
@@ -12,7 +12,7 @@ class Menu:
         self.font = pygame.font.Font(FONT_STYLE, 30)
         self.text = self.font.render(message, True, (0, 0, 0))
         self.text_rect = self.text.get_rect()
-        self.text_rect.center = (self.Half_screen_width, self.Half_screen_height)
+        self.text_rect.center = (self.HALF_SCREEN_WIDTH, self.HALF_SCREEN_HEIGHT)
 
     def update(self, game):
         pygame.display.update()
@@ -22,12 +22,11 @@ class Menu:
         screen.blit(self.text, self.text_rect)   
 
     def reset_screen_color(self, screen):
-
         screen.fill((255, 255, 255))
 
     def hundle_events_on_menu(self, game):
         for event in pygame.event.get():
-            if event.type == pygame.quit():
+            if event.type == pygame.QUIT:
                 game.running = False
                 game.playing = False
             elif event.type == pygame.KEYDOWN:
@@ -36,4 +35,4 @@ class Menu:
     def update_message(self, message):
         self.text = self.font.render(message, True, (0, 0, 0))
         self.text_rect = self.text.get_rect()
-        self.text_rect.center = (self.Half_screen_width, self.Half_screen_height)         
+        self.text_rect.center = (self.HALF_SCREEN_WIDTH, self.HALF_SCREEN_HEIGHT)         
