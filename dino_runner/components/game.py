@@ -1,10 +1,11 @@
 import pygame
 
-from dino_runner.utils.constants import BG, ICON, SCREEN_HEIGHT, SCREEN_WIDTH, TITLE, FPS, FONT_STYLE
+from dino_runner.utils.constants import BG, ICON, SCREEN_HEIGHT, SCREEN_WIDTH, TITLE, FPS, DEFAULT_TYPE
 from dino_runner.components.dinosaur import Dinosaur
 from dino_runner.components.obstacles.obstacleManager import ObstacleManager
 from dino_runner.components.menu import Menu
 from dino_runner.components.score import Score
+from dino_runner.components.power_ups.power_up_manger import PowerUpManager
 
 class Game:
     GAME_SPEED = 20
@@ -25,6 +26,7 @@ class Game:
         self.running = False
         self.death_count = 0
         self.score = Score()
+        self.power_up_manager = PowerUpManager()
         
     def execute(self):
         self.running = True
@@ -39,6 +41,7 @@ class Game:
         self.player.reset_dinosaur()
         self.score.reset_score()
         self.game_speed = self.GAME_SPEED
+        self.power_up_manager.reset()
 
     def run(self):
         self.reset()
@@ -59,16 +62,19 @@ class Game:
         self.player.update(user_input)
         self.obstacle_manager.update(self)
         self.score.update_score(self)
+        self.power_up_manager.update(self)
 
     def draw(self):
         self.clock.tick(FPS)
         self.screen.fill((255, 255, 255))
         self.player.draw(self.screen)
         self.obstacle_manager.draw(self.screen)
+        self.power_up_manager.draw(self.screen)
         self.score.draw_score(self.screen)
         self.draw_background()
         pygame.display.update()
-        pygame.display.flip()
+        self.draw_power_up_time()
+        # pygame.display.flip()
         
         
 
@@ -98,4 +104,13 @@ class Game:
         self.screen.blit(ICON, (HALF_SCREEN_WIDTH -50, HALF_SCREEN_HEIGHT -140))
         self.menu.update(self)
 
+    def draw_power_up_time(self):
+        if self.player.has_power_up:
+            time_to_show = round((self.player.power_time_up - pygame.time.get_ticks()) / 1000, 2)
+
+            if time_to_show >= 0:
+                self.menu.draw(self.screen, f'{self.player.type.capitalize()} enabled for {time_to_show}',500, 50)
+            else:
+                self.player.has_power_up = False
+                self.player.type = DEFAULT_TYPE  
 

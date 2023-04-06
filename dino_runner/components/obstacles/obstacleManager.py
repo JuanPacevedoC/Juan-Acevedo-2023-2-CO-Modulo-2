@@ -4,7 +4,7 @@ import random
 from dino_runner.components.obstacles.captus import Cactus
 from dino_runner.components.obstacles.largeCaptus import LargeCactus
 from dino_runner.components.obstacles.bird import Bird
-from dino_runner.utils.constants import SMALL_CACTUS, LARGE_CACTUS, BIRD, SCREEN_HEIGHT , SCREEN_WIDTH, FONT_STYLE
+from dino_runner.utils.constants import SMALL_CACTUS, LARGE_CACTUS, BIRD, SCREEN_HEIGHT , SCREEN_WIDTH, FONT_STYLE, SHIELD_TYPE
 
 class ObstacleManager:
     HALF_SCREEN_HEIGHT = SCREEN_HEIGHT // 2 
@@ -26,11 +26,13 @@ class ObstacleManager:
         for obstacle in self.obstacles:
             obstacle.update(game.game_speed, self.obstacles)
             if game.player.dino_rect.colliderect(obstacle.rect):
-                print("collision")
-                pygame.time.delay(1000)
-                game.death_count += 1
-                game.playing = False
-                break                 
+                if game.player.type != SHIELD_TYPE:
+                    pygame.time.delay(1000)
+                    game.death_count += 1
+                    game.playing = False
+                    break
+                else:
+                    self.obstacles.remove(obstacle)                 
 
     def show_death_count(self,game, screen):
         self.font = pygame.font.Font(FONT_STYLE, 30)
