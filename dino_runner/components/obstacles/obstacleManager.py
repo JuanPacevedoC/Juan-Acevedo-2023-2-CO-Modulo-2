@@ -2,48 +2,45 @@ import pygame
 import random
 
 from dino_runner.components.obstacles.captus import Cactus
-from dino_runner.components.obstacles.largeCaptus import LargeCactus
 from dino_runner.components.obstacles.bird import Bird
-from dino_runner.utils.constants import SMALL_CACTUS, LARGE_CACTUS, BIRD, SCREEN_HEIGHT , SCREEN_WIDTH, FONT_STYLE, SHIELD_TYPE
+from dino_runner.utils.constants import SHIELD_TYPE, HAMMER_TYPE
+
 
 class ObstacleManager:
-    HALF_SCREEN_HEIGHT = SCREEN_HEIGHT // 2 
-    HALF_SCREEN_WIDTH = SCREEN_WIDTH // 2
-
-    def __init__(self):
-        self.obstacles = []
-
-
-    def update(self, game):
-        if len(self.obstacles) == 0:
-            if random.randint(0, 3) == 0:
-                self.obstacles.append(Cactus(SMALL_CACTUS))
-            elif random.randint(0, 3) == 1:
-                self.obstacles.append(LargeCactus(LARGE_CACTUS))
-            elif random.randint(0, 3) == 2 or random.randint(0, 3) == 3:
-                self.obstacles.append(Bird(BIRD))
-
-        for obstacle in self.obstacles:
+  def __init__(self):
+    self.obstacles = []
+    
+  def generate_obstacle(self, obstacle_type):
+    if obstacle_type == 0:
+      cactus_type = 'SMALL'
+      obstacle = Cactus(cactus_type)
+    elif obstacle_type == 1:
+      cactus_type = 'LARGE'
+      obstacle = Cactus(cactus_type)
+    else:
+      obstacle = Bird()
+    return obstacle
+    
+  def update(self, game):
+    if len(self.obstacles) == 0:
+      obstacle_type = random.randint(0, 2)
+      obstacle = self.generate_obstacle(obstacle_type)
+      self.obstacles.append(obstacle)
+      
+    for obstacle in self.obstacles:
             obstacle.update(game.game_speed, self.obstacles)
             if game.player.dino_rect.colliderect(obstacle.rect):
                 if game.player.type != SHIELD_TYPE:
                     pygame.time.delay(1000)
-                    game.death_count += 1
+                    game.death_count.count += 1
                     game.playing = False
                     break
                 else:
-                    self.obstacles.remove(obstacle)                 
-
-    def show_death_count(self,game, screen):
-        self.font = pygame.font.Font(FONT_STYLE, 30)
-        self.text = self.font.render(f'Total Deaths: {game.death_count}', True, (0, 0, 0))
-        self.text_rect = self.text.get_rect()
-        self.text_rect.center = (self.HALF_SCREEN_WIDTH, self.HALF_SCREEN_HEIGHT + 120)
-        screen.blit(self.text, self.text_rect)            
-
-    def draw(self, screen):
-        for obstacle in self.obstacles:
-            obstacle.draw(screen) 
-
-    def reset_obstacle(self):
-        self.obstacles = []        
+                    self.obstacles.remove(obstacle)   
+  
+  def draw(self, screen):
+    for obstacle in self.obstacles:
+      obstacle.draw(screen)
+      
+  def reset_obstacles(self):
+    self.obstacles = []

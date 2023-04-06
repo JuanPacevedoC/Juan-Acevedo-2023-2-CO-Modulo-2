@@ -19,4 +19,4 @@ class PowerUp(Sprite):
             power_ups.pop()
 
     def draw(self, scren):
-        scren.blit(self.image, self.rect)   
+        scren.blit(self.image, self.rect)  
